@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/api")
 public class GptAPI {
@@ -40,42 +41,41 @@ public class GptAPI {
         this.voiceAnalysisService = voiceAnalysisService;
     }
 
-	@GetMapping("/")
-	public String index() {
-		return "Greetings from Spring Boot!";
-	}
+    @GetMapping("/")
+    public String index() {
+        return "Greetings from Spring Boot!";
+    }
 
 
+    public ResponseEntity<Resource> _sendAudio(byte[] tutorResponseAudioData) throws Exception {
+        Resource resource = new ByteArrayResource(tutorResponseAudioData);
 
-	public ResponseEntity<Resource> _sendAudio(byte[] tutorResponseAudioData) throws Exception {
-	  Resource resource = new ByteArrayResource(tutorResponseAudioData);
-
-            return ResponseEntity.ok()
-                    .contentLength(tutorResponseAudioData.length)
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"tutor_response.wav\"")
-                    .body(resource);
+        return ResponseEntity.ok()
+                .contentLength(tutorResponseAudioData.length)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"tutor_response.wav\"")
+                .body(resource);
 
 
-	}
+    }
 
-	@PostMapping("/startTest")
-	public ResponseEntity<Resource> processRequest(@RequestBody StartTestRequest startTestRequest) {
-        	
-	    String tutorType = startTestRequest.getTutorType();
+    @PostMapping("/startTest")
+    public ResponseEntity<Resource> processRequest(@RequestBody StartTestRequest startTestRequest) {
+
+        String tutorType = startTestRequest.getTutorType();
         String content = startTestRequest.getContent();
 
         try {
-        // Step 1: Get text response from LLM
-        String tutorResponseText = tutorLLMService.startConversation(tutorType, content);
+            // Step 1: Get text response from LLM
+            String tutorResponseText = tutorLLMService.startConversation(tutorType, content);
 
-        // Step 2: Convert text response to speech
-	
-	byte[] tutorResponseAudioData = textToSpeechService.tts(tutorResponseText);
+            // Step 2: Convert text response to speech
 
-        // Step 4: Create a resource from the tutor response audio data
-	return _sendAudio(tutorResponseAudioData);
-          
+            byte[] tutorResponseAudioData = textToSpeechService.tts(tutorResponseText);
+
+            // Step 4: Create a resource from the tutor response audio data
+            return _sendAudio(tutorResponseAudioData);
+
         } catch (IOException e) {
             // Handle the case where the file couldn't be read
             Logger.getAnonymousLogger().severe("Error reading the audio file: " + e.getMessage());
@@ -111,7 +111,7 @@ public class GptAPI {
             byte[] tutorResponseAudioData = textToSpeechService.tts(tutorResponse);
 
             // Step 4: Create a resource from the tutor response audio data
-	    return _sendAudio(tutorResponseAudioData);
+            return _sendAudio(tutorResponseAudioData);
         } catch (IOException e) {
             // Handle the case where the file couldn't be read
             Logger.getAnonymousLogger().severe("Error reading the audio file: " + e.getMessage());
