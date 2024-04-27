@@ -4,7 +4,6 @@ import com.example.demo.tutor.SpeechToTextService;
 import com.example.demo.tutor.TextToSpeechService;
 import com.example.demo.tutor.TutorLLMService;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
