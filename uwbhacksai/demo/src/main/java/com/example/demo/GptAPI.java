@@ -79,7 +79,7 @@ public class GptAPI {
 
         try {
             // Step 1: Get text response from LLM
-            String tutorResponseText = tutorLLMService.startConversation(tutorType, content);
+            String tutorResponseText = tutorLLMService.startConversation(content, tutorType);
 
             // Step 2: Convert text response to speech
             lastTextBuff = tutorResponseText;
