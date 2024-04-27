@@ -1,6 +1,5 @@
 package com.example.demo;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.IOException;
@@ -8,20 +7,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.azure.core.util.BinaryData;
-import com.azure.core.util.Configuration;
 
 import com.example.demo.tutor.TextToSpeechService;
-import com.example.demo.tutor.OpenAIConfig;
-import com.azure.ai.openai.OpenAIClient;
-import com.azure.ai.openai.OpenAIClientBuilder;
-import com.azure.ai.openai.models.SpeechGenerationOptions;
 
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest(classes = {TextToSpeechService.class, OpenAIConfig.class})
+@SpringBootTest(classes = {TextToSpeechService.class, ExternalApiConfig.class})
 class TextToSpeechServiceTest {
     @Autowired
     private TextToSpeechService instance;

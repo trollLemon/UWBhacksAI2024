@@ -1,4 +1,4 @@
-package com.example.demo.tutor;
+package com.example.demo;
 
 import com.azure.ai.openai.OpenAIClient;
 import com.azure.ai.openai.OpenAIClientBuilder;
@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class OpenAIConfig {
+public class ExternalApiConfig {
 
     @Value("${openai.key}")
     private String openaiKey;
@@ -19,4 +19,8 @@ public class OpenAIConfig {
                 .credential(new KeyCredential(openaiKey))
                 .buildClient();
     }
+
+    @Value("${behavioral.key}")
+    private String behavioralKey;
+
 }
