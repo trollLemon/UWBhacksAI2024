@@ -24,9 +24,6 @@ public class ExternalApiConfig {
     @Value("${behavioral.key}")
     public String behavioralKey;
 
-    @Value("${behavioral.clientId}")
-    public String behavioralClientId;
-
     @Bean
     public OkHttpClient okHttpClient() {
         return new OkHttpClient.Builder()

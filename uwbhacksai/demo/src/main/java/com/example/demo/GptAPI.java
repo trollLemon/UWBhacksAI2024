@@ -25,7 +25,7 @@ import java.util.logging.Logger;
 @RestController
 @RequestMapping("/api")
 public class GptAPI {
-	
+
     private String lastTextBuff;
     private final TutorLLMService tutorLLMService;
     private final SpeechToTextService speechToTextService;
@@ -62,12 +62,12 @@ public class GptAPI {
 
 
     @GetMapping("/tutorTranscript")
-    public ResponseEntity<String> returnLastTranscript(){
-	return ResponseEntity.ok().contentLength(lastTextBuff.length())
-		.contentType(MediaType.TEXT_PLAIN)
-		.header(HttpHeaders.CONTENT_DISPOSITION)
-		.body(lastTextBuff);	
-	
+    public ResponseEntity<String> returnLastTranscript() {
+        return ResponseEntity.ok().contentLength(lastTextBuff.length())
+                .contentType(MediaType.TEXT_PLAIN)
+                .header(HttpHeaders.CONTENT_DISPOSITION)
+                .body(lastTextBuff);
+
     }
 
 
@@ -82,7 +82,7 @@ public class GptAPI {
             String tutorResponseText = tutorLLMService.startConversation(tutorType, content);
 
             // Step 2: Convert text response to speech
-	    lastTextBuff=tutorResponseText;
+            lastTextBuff = tutorResponseText;
             byte[] tutorResponseAudioData = textToSpeechService.tts(tutorResponseText);
 
             // Step 4: Create a resource from the tutor response audio data
@@ -107,7 +107,7 @@ public class GptAPI {
     public ResponseEntity<Resource> processStudentResponse(@RequestParam("file") MultipartFile file) {
         try {
             // Step 1: Queue up behavioral analysis and convert student's audio response to text
-            voiceAnalysisService.queueAnalysis(file);
+            voiceAnalysisService.asyncQueueAnalysis(file);
 
             // Convert the audio file to a byte array
             byte[] audioData = file.getBytes();
