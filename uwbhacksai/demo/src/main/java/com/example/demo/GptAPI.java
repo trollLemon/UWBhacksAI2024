@@ -25,7 +25,8 @@ import java.util.logging.Logger;
 @RestController
 @RequestMapping("/api")
 public class GptAPI {
-
+	
+    private String lastTextBuff;
     private final TutorLLMService tutorLLMService;
     private final SpeechToTextService speechToTextService;
     private final TextToSpeechService textToSpeechService;
@@ -59,6 +60,17 @@ public class GptAPI {
 
     }
 
+
+    @GetMapping("/tutorTranscript")
+    public ResponseEntity<String> returnLastTranscript(){
+	return ResponseEntity.ok().contentLength(lastTextBuff.length())
+		.contentType(MediaType.TEXT_PLAIN)
+		.header(HttpHeaders.CONTENT_DISPOSITION)
+		.body(lastTextBuff);	
+	
+    }
+
+
     @PostMapping("/startTest")
     public ResponseEntity<Resource> processRequest(@RequestBody StartTestRequest startTestRequest) {
 
@@ -70,7 +82,7 @@ public class GptAPI {
             String tutorResponseText = tutorLLMService.startConversation(tutorType, content);
 
             // Step 2: Convert text response to speech
-
+	    lastTextBuff=tutorResponseText;
             byte[] tutorResponseAudioData = textToSpeechService.tts(tutorResponseText);
 
             // Step 4: Create a resource from the tutor response audio data
