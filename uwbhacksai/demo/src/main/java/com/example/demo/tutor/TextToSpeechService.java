@@ -24,7 +24,7 @@ public class TextToSpeechService{
 
 
 
-    public void tts(String response) throws IOException {
+    public byte[] tts(String response) throws IOException {
         String deploymentOrModelId = "tts-1";
 
 
@@ -34,10 +34,11 @@ public class TextToSpeechService{
 
        BinaryData speech = openAIClient.generateSpeechFromText(deploymentOrModelId, options);
        
-       Path path = Paths.get("./temp/speech.wav");
+       Path path = Paths.get("./temp/tutor_response.wav");
 
        Files.write(path, speech.toBytes());
 
+       return speech.toBytes();
  	
       
 
