@@ -20,6 +20,7 @@ public class SpeechToTextService {
     }
 
     public String getTranscription(String fileName) {
+        // TODO: Fix path file and correctly read from uploaded file
         Path filePath = Paths.get("path/to/audio/file");
 
         byte[] file = BinaryData.fromFile(filePath).toBytes();
