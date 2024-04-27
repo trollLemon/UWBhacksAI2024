@@ -27,21 +27,17 @@ public class TextToSpeechService{
 
 
 
-    public static void tts(String response) throws IOException {
+    public void tts(String response) throws IOException {
         String azureOpenaiKey =  Configuration.getGlobalConfiguration().get("AZURE_OPENAI_KEY");
         String endpoint = Configuration.getGlobalConfiguration().get("AZURE_OPENAI_ENDPOINT");
         String deploymentOrModelId = "tts";
 
-        OpenAIClient client = new OpenAIClientBuilder()
-                .endpoint(endpoint)
-                .credential(new AzureKeyCredential(azureOpenaiKey))
-                .buildClient();
 
         SpeechGenerationOptions options = new SpeechGenerationOptions(
                 response,
                 SpeechVoice.ALLOY);
 
-        BinaryData speech = client.generateSpeechFromText(deploymentOrModelId, options);
+        BinaryData speech = openAIClient.generateSpeechFromText(deploymentOrModelId, options);
         // Checkout your generated speech in the file system.
         Path path = Paths.get("./azure-ai-openai/src/samples/java/com/azure/ai/openai/resources/speech.wav");
         Files.write(path, speech.toBytes());
