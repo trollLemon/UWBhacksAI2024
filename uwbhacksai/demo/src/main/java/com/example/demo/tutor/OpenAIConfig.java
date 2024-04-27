@@ -2,7 +2,7 @@ package com.example.demo.tutor;
 
 import com.azure.ai.openai.OpenAIClient;
 import com.azure.ai.openai.OpenAIClientBuilder;
-import com.azure.core.credential.AzureKeyCredential;
+import com.azure.core.credential.KeyCredential;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,12 +11,12 @@ import org.springframework.context.annotation.Configuration;
 public class OpenAIConfig {
 
     @Value("${azure.openai.key}")
-    private String azureOpenaiKey;
+    private String openaiKey;
 
     @Bean
     public OpenAIClient openAIClient() {
         return new OpenAIClientBuilder()
-                .credential(new AzureKeyCredential(azureOpenaiKey))
+                .credential(new KeyCredential(openaiKey))
                 .buildClient();
     }
 }
