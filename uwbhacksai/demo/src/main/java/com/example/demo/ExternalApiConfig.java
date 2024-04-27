@@ -3,6 +3,7 @@ package com.example.demo;
 import com.azure.ai.openai.OpenAIClient;
 import com.azure.ai.openai.OpenAIClientBuilder;
 import com.azure.core.credential.KeyCredential;
+import okhttp3.OkHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +22,18 @@ public class ExternalApiConfig {
     }
 
     @Value("${behavioral.key}")
-    private String behavioralKey;
+    public String behavioralKey;
+
+    @Value("${behavioral.clientId}")
+    public String behavioralClientId;
+
+    @Bean
+    public OkHttpClient okHttpClient() {
+        return new OkHttpClient.Builder()
+                .addInterceptor(chain -> chain.proceed(chain.request().newBuilder()
+                        .addHeader("X-Auth-Token", behavioralKey)
+                        .build()))
+                .build();
+    }
 
 }

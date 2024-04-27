@@ -3,6 +3,7 @@ package com.example.demo;
 import com.example.demo.tutor.SpeechToTextService;
 import com.example.demo.tutor.TextToSpeechService;
 import com.example.demo.tutor.TutorLLMService;
+import com.example.demo.voiceAnalysis.VoiceAnalysisService;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,13 +27,16 @@ public class GptAPI {
     private final TutorLLMService tutorLLMService;
     private final SpeechToTextService speechToTextService;
     private final TextToSpeechService textToSpeechService;
+    private final VoiceAnalysisService voiceAnalysisService;
 
     public GptAPI(TutorLLMService tutorLLMService,
                   SpeechToTextService speechToTextService,
-                  TextToSpeechService textToSpeechService) {
+                  TextToSpeechService textToSpeechService,
+                  VoiceAnalysisService voiceAnalysisService) {
         this.tutorLLMService = tutorLLMService;
         this.speechToTextService = speechToTextService;
         this.textToSpeechService = textToSpeechService;
+        this.voiceAnalysisService = voiceAnalysisService;
     }
 
 	@GetMapping("/")
@@ -65,8 +69,12 @@ public class GptAPI {
             produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<Resource> processStudentResponse(@RequestParam("file") MultipartFile file) {
         try {
-            // Step 1: Convert student's audio response to text
+            // Step 1: Queue up behavioral analysis and convert student's audio response to text
+            voiceAnalysisService.queueAnalysis(file);
+
+            // Convert the audio file to a byte array
             byte[] audioData = file.getBytes();
+            // Get the transcription of the student's response
             String transcribedStudentResponse = speechToTextService.getTranscription(
                     audioData, file.getOriginalFilename()
             );
