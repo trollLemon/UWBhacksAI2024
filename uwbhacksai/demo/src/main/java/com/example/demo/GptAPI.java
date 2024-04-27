@@ -8,41 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.MediaType;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ResponseEntity;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-class Request {
-    @JsonProperty("tutorType")
-    private String tutorType;
-
-    @JsonProperty("content")
-    private String content;
-
-    // Default constructor
-    public Request() {
-    }
-
-    // Getters and setters
-    public String getTutorType() {
-        return tutorType;
-    }
-
-    public void setTutorType(String tutorType) {
-        this.tutorType = tutorType;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-}
-
-class Audio{}
 
 @RestController
 @RequestMapping("/api")
@@ -54,10 +20,10 @@ public class GptAPI {
 	}
 
 	@PostMapping("/startTest")
-	public String processRequest(@RequestBody Request request) {
+	public String processRequest(@RequestBody StartTestRequest startTestRequest) {
         	
-	    String tutorType = request.getTutorType();
-        String content = request.getContent();
+	    String tutorType = startTestRequest.getTutorType();
+        String content = startTestRequest.getContent();
 
         // TODO: Implement the logic to process the request
         
