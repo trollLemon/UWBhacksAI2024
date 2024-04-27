@@ -63,7 +63,8 @@ public class GptAPI {
        	return "Request processed successfully";
     }
 
-	@PostMapping(value = "/sendStudentResponse", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+	@PostMapping(value = "/sendStudentResponse", consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
 	public ResponseEntity<Resource> uploadFile(@RequestParam("file") MultipartFile file) {
 //	try {
 //            byte[] data = audioService.processAudio(file);
