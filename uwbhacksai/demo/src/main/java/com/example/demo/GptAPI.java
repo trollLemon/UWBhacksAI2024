@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
- class Request {
+class Request {
     @JsonProperty("tutorType")
     private String tutorType;
 
@@ -44,11 +44,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 class Audio{}
 
-
 @RestController
 @RequestMapping("/api")
 public class GptAPI {
-
 
 	@GetMapping("/")
 	public String index() {
@@ -58,31 +56,28 @@ public class GptAPI {
 	@PostMapping("/startTest")
 	public String processRequest(@RequestBody Request request) {
         	
-	String tutorType = request.getTutorType();
+	    String tutorType = request.getTutorType();
         String content = request.getContent();
         
         
        	return "Request processed successfully";
-    	}
+    }
 
 	@PostMapping(value = "/sendStudentResponse", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
 	public ResponseEntity<Resource> uploadFile(@RequestParam("file") MultipartFile file) {
-	//try {
-        //    byte[] data = audioService.processAudio(file);
-        //    Resource resource = new ByteArrayResource(data);
+//	try {
+//            byte[] data = audioService.processAudio(file);
+//            Resource resource = new ByteArrayResource(data);
+//
+//            return ResponseEntity.ok()
+//                    .contentLength(data.length)
+//                    .contentType(MediaType.parseMediaType("audio/mpeg"))
+//                    .body(resource);
+//        } catch (Exception e) {
+//            return ResponseEntity.internalServerError().build();
+//        }
 
-        //    return ResponseEntity.ok()
-        //            .contentLength(data.length)
-        //            .contentType(MediaType.parseMediaType("audio/mpeg"))
-        //            .body(resource);
-       // } catch (Exception e) {
-         //   return ResponseEntity.internalServerError().build();
-        //}
-	//
-	return ResponseEntity.internalServerError().build();
+	    return ResponseEntity.internalServerError().build();
 	}
-    
-
-
 
 }
