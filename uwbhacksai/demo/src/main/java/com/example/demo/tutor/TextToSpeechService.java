@@ -25,18 +25,21 @@ public class TextToSpeechService{
 
 
     public void tts(String response) throws IOException {
-        String deploymentOrModelId = "tts";
+        String deploymentOrModelId = "tts-1";
 
 
         SpeechGenerationOptions options = new SpeechGenerationOptions(
                 response,
-                SpeechVoice.ALLOY);
+		SpeechVoice.ALLOY);
 
        BinaryData speech = openAIClient.generateSpeechFromText(deploymentOrModelId, options);
+       
        Path path = Paths.get("./temp/speech.wav");
+
        Files.write(path, speech.toBytes());
 
-
+ 	
+      
 
 
      }
