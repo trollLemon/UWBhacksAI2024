@@ -6,7 +6,6 @@ plugins {
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
-
 java {
 	sourceCompatibility = '17'
 }
@@ -17,9 +16,10 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'com.azure:azure-ai-openai:1.0.0-beta.9'
+	implementation 'com.azure:azure-ai-openai:1.0.0-beta.8'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
+
 
 tasks.named('test') {
 	useJUnitPlatform()

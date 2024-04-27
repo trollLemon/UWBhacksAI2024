@@ -1,6 +1,4 @@
-package com.example.demo;
-
-package com.azure.ai.openai.usage;
+package com.example.demo.tutor;
 
 import com.azure.ai.openai.OpenAIClient;
 import com.azure.ai.openai.OpenAIClientBuilder;
@@ -10,13 +8,16 @@ import com.azure.core.credential.AzureKeyCredential;
 import com.azure.core.util.BinaryData;
 import com.azure.core.util.Configuration;
 
+import org.springframework.stereotype.Service;
+
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class TextToSpeach{
+@Service
+public class TextToSpeech{
 
 	
 
