@@ -35,7 +35,7 @@ class TextToSpeechServiceTest {
 
         // Verifying behavior
         // You may add more specific assertions depending on your requirements
-        Path outputPath = Paths.get("./azure-ai-openai/src/samples/java/com/azure/ai/openai/resources/speech.wav");
+        Path outputPath = Paths.get("./temp/speech.wav");
         assertTrue(Files.exists(outputPath), "Output file should be created");
     }
 
