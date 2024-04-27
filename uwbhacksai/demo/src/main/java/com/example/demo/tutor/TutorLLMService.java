@@ -5,6 +5,7 @@ import com.azure.ai.openai.models.*;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -35,6 +36,16 @@ public class TutorLLMService {
         this.openAIClient = openAIClient;
     }
 
+    private ChatCompletionsOptions getChatCompletionOptions() {
+        ChatCompletionsOptions chatCompletionsOptions = new ChatCompletionsOptions(chatMessages);
+        ChatCompletionsFunctionToolDefinition tools = new ChatCompletionsFunctionToolDefinition(
+                new FunctionDefinition("startGrading")
+                        .setDescription("Call this function when you finish asking all the questions to the student.")
+        );
+        chatCompletionsOptions.setTools(Collections.singletonList(tools));
+        return chatCompletionsOptions;
+    }
+
     /**
      * Initiates a conversation with the AI model using the provided content and tutor personality.
      * This method adds the initial user message and predefined instructions to the chat history,
@@ -46,12 +57,14 @@ public class TutorLLMService {
      * @return the AI-generated response as a string.
      */
     public String startConversation(String content, String tutorPersonality) {
+        // Reset the chat messages to start a new conversation
+        chatMessages.clear();
+
         // Add the initial system message with predefined instructions
         chatMessages.add(new ChatRequestSystemMessage(content + "\n---\n" + PREDIFINED_INSTRUCTIONS));
 
         // Generate the first AI response based on the system
-        ChatCompletions chatCompletions = openAIClient.getChatCompletions(model,
-                new ChatCompletionsOptions(chatMessages));
+        ChatCompletions chatCompletions = openAIClient.getChatCompletions(model, getChatCompletionOptions());
 
         String tutorResponse = chatCompletions.getChoices().get(0).getMessage().getContent();
         chatMessages.add(new ChatRequestAssistantMessage(tutorResponse));
@@ -70,9 +83,16 @@ public class TutorLLMService {
     public String processResponse(String response) {
         chatMessages.add(new ChatRequestUserMessage(response));
 
-        ChatCompletions chatCompletions = openAIClient.getChatCompletions(model,
-                new ChatCompletionsOptions(chatMessages));
-
+        ChatCompletions chatCompletions = openAIClient.getChatCompletions(model, getChatCompletionOptions());
+        ChatChoice choice = chatCompletions.getChoices().get(0);
+        if (choice.getFinishReason().equals(CompletionsFinishReason.FUNCTION_CALL)) {
+            // The AI has requested to call a function, handle this case
+            String function = choice.getMessage().getToolCalls().get(0).getId();
+            if (function.equals("startGrading")) {
+                // Perform grading logic here
+                return "Grading completed. Thank you for your responses!";
+            }
+        }
         String tutorResponse = chatCompletions.getChoices().get(0).getMessage().getContent();
         chatMessages.add(new ChatRequestAssistantMessage(tutorResponse));
 
