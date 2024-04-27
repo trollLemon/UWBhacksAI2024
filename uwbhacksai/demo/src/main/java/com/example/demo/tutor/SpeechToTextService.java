@@ -2,14 +2,10 @@ package com.example.demo.tutor;
 
 import org.springframework.stereotype.Service;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import com.azure.ai.openai.OpenAIClient;
 import com.azure.ai.openai.models.AudioTranscription;
 import com.azure.ai.openai.models.AudioTranscriptionFormat;
 import com.azure.ai.openai.models.AudioTranscriptionOptions;
-import com.azure.core.util.BinaryData;
 
 @Service
 public class SpeechToTextService {
@@ -19,12 +15,8 @@ public class SpeechToTextService {
         this.openAIClient = openAIClient;
     }
 
-    public String getTranscription(String fileName) {
-        // TODO: Fix path file and correctly read from uploaded file
-        Path filePath = Paths.get("path/to/audio/file");
-
-        byte[] file = BinaryData.fromFile(filePath).toBytes();
-        AudioTranscriptionOptions transcriptionOptions = new AudioTranscriptionOptions(file)
+    public String getTranscription(byte[] audioData, String fileName) {
+        AudioTranscriptionOptions transcriptionOptions = new AudioTranscriptionOptions(audioData)
                 .setResponseFormat(AudioTranscriptionFormat.JSON);
 
         AudioTranscription transcription = openAIClient.getAudioTranscription(
