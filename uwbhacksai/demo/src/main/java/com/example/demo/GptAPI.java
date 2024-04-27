@@ -47,7 +47,7 @@ public class GptAPI {
     }
 
 
-    public ResponseEntity<Resource> _sendAudio(byte[] tutorResponseAudioData) throws Exception {
+    private ResponseEntity<Resource> _sendAudio(byte[] tutorResponseAudioData) throws Exception {
         Resource resource = new ByteArrayResource(tutorResponseAudioData);
 
         return ResponseEntity.ok()

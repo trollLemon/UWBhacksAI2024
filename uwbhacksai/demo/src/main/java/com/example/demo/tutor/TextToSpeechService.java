@@ -14,7 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Service
-public class TextToSpeechService{
+public class TextToSpeechService {
 
     private final OpenAIClient openAIClient;
 
@@ -23,26 +23,24 @@ public class TextToSpeechService{
     }
 
 
-
     public byte[] tts(String response) throws IOException {
         String deploymentOrModelId = "tts-1";
 
-
+        // Set speech generation options
         SpeechGenerationOptions options = new SpeechGenerationOptions(
                 response,
-		SpeechVoice.ALLOY);
+                SpeechVoice.ALLOY);
 
-       BinaryData speech = openAIClient.generateSpeechFromText(deploymentOrModelId, options);
-       
-       Path path = Paths.get("./temp/tutor_response.wav");
+        // Generate speech from text
+        BinaryData speech = openAIClient.generateSpeechFromText(deploymentOrModelId, options);
 
-       Files.write(path, speech.toBytes());
+        // Save speech to file
+//        Path path = Paths.get("./temp/tutor_response.wav");
+//        Files.write(path, speech.toBytes());
 
-       return speech.toBytes();
- 	
-      
+        return speech.toBytes();
 
 
-     }
+    }
 
 }
