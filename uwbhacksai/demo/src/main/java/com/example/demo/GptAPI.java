@@ -137,6 +137,7 @@ public class GptAPI {
             // Step 2: Process the student's response and generate a tutor response
             TutorResponse tutorResponse = tutorLLMService.processResponse(transcribedStudentResponse);
             String tutorTextResponse = tutorLLMService.processResponse(transcribedStudentResponse).getTextResponse();
+            lastTutorTextBuff = tutorTextResponse;
 
             // Check if the tutor is done grading
             isGradingTime = tutorResponse.isDone();
