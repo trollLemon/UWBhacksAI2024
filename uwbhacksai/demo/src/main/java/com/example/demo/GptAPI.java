@@ -20,16 +20,13 @@ import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.Path;
 import java.util.logging.Logger;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api")
 public class GptAPI {
-    private Boolean grading;
+    private Boolean isGradingTime = false;
     private String lastTextBuff;
     private final TutorLLMService tutorLLMService;
     private final SpeechToTextService speechToTextService;
@@ -60,8 +57,6 @@ public class GptAPI {
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"tutor_response.wav\"")
                 .body(resource);
-
-
     }
 
 
@@ -71,7 +66,6 @@ public class GptAPI {
                 .contentType(MediaType.TEXT_PLAIN)
                 .header(HttpHeaders.CONTENT_DISPOSITION)
                 .body(lastTextBuff);
-
     }
 
     @GetMapping("/studentTranscript")
@@ -80,7 +74,6 @@ public class GptAPI {
                 .contentType(MediaType.TEXT_PLAIN)
                 .header(HttpHeaders.CONTENT_DISPOSITION)
                 .body(lastTextBuff);
-
     }
 
 
@@ -88,12 +81,8 @@ public class GptAPI {
     public ResponseEntity<Boolean> shouldGrade() {
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION)
-                .body(grading);
-
+                .body(isGradingTime);
     }
-
-
-
 
     @PostMapping("/startTest")
     public ResponseEntity<Resource> processRequest(@RequestBody StartTestRequest startTestRequest) {
@@ -146,7 +135,7 @@ public class GptAPI {
             lastTextBuff = tutorTextResponse;
 
             // Check if the tutor is done grading
-            boolean startGrading = tutorResponse.isDone();
+            isGradingTime = tutorResponse.isDone();
 
             // Step 3: Convert the tutor response to speech and get the audio data
             byte[] tutorResponseAudioData = textToSpeechService.tts(tutorTextResponse);
