@@ -129,11 +129,11 @@ public class GptAPI {
             String transcribedStudentResponse = speechToTextService.getTranscription(
                     file.getBytes(), file.getOriginalFilename()
             );
+            lastTextBuff = transcribedStudentResponse;
 
             // Step 2: Process the student's response and generate a tutor response
             TutorResponse tutorResponse = tutorLLMService.processResponse(transcribedStudentResponse);
             String tutorTextResponse = tutorLLMService.processResponse(transcribedStudentResponse).getTextResponse();
-            lastTextBuff = tutorTextResponse;
 
             // Check if the tutor is done grading
             isGradingTime = tutorResponse.isDone();

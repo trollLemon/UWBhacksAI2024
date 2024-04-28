@@ -94,6 +94,10 @@ public class TutorLLMService {
 
         // Get the AI-generated response and add it to the chat history
         String tutorResponse = choice.getMessage().getContent();
+        if (tutorResponse == null) {
+            return new TutorResponse(null, true);
+        }
+
         boolean startGrading = false;
         chatMessages.add(new ChatRequestAssistantMessage(tutorResponse));
 
