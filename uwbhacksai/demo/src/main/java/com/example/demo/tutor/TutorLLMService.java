@@ -126,9 +126,21 @@ public class TutorLLMService {
 
             return chatCompletions.getChoices().get(0).getMessage().getContent();
         }).subscribeOn(Schedulers.boundedElastic());
+
+        this.gradingResults.subscribe(
+                result -> {
+                    // Handle the successful result
+                },
+                error -> {
+                    // Handle an error
+                }
+        );
     }
 
     public Mono<String> getGradingResults() {
+        if (this.gradingResults == null) {
+            return Mono.error(new IllegalStateException("Grading task has not been started."));
+        }
         return gradingResults;
     }
 
