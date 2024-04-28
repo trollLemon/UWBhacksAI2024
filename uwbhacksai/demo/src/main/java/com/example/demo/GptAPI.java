@@ -73,6 +73,16 @@ public class GptAPI {
 
     }
 
+    @GetMapping("/studentTranscript")
+    public ResponseEntity<String> returnLastStudentTranscript() {
+        return ResponseEntity.ok().contentLength(lastTextBuff.length())
+                .contentType(MediaType.TEXT_PLAIN)
+                .header(HttpHeaders.CONTENT_DISPOSITION)
+                .body(lastTextBuff);
+
+    }
+
+
 
     @PostMapping("/startTest")
     public ResponseEntity<Resource> processRequest(@RequestBody StartTestRequest startTestRequest) {
@@ -120,8 +130,9 @@ public class GptAPI {
             );
 
             // Step 2: Process the student's response and generate a tutor response
-            String tutorResponse = tutorLLMService.processResponse(transcribedStudentResponse).getTextResponse();
-            boolean startGrading = tutorLLMService.processResponse(transcribedStudentResponse).isDone();
+            String tutorResponse = tutorLLMService.processResponse(transcribedStudentResponse);
+	    
+	    lastTextBuff = tutorResponse;
 
             // Step 3: Convert the tutor response to speech and get the audio data
             byte[] tutorResponseAudioData = textToSpeechService.tts(tutorResponse);
