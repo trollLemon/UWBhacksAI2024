@@ -125,7 +125,7 @@ public class TutorLLMService {
                     .setResponseFormat(new ChatCompletionsJsonResponseFormat()));
 
             return chatCompletions.getChoices().get(0).getMessage().getContent();
-        }).subscribeOn(Schedulers.boundedElastic());
+        }).subscribeOn(Schedulers.boundedElastic()).cache();
 
         this.gradingResults.subscribe(
                 result -> {
