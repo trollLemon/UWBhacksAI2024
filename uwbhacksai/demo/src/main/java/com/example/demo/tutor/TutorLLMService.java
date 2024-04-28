@@ -95,7 +95,6 @@ public class TutorLLMService {
         // Get the AI-generated response and add it to the chat history
         String tutorResponse = choice.getMessage().getContent();
         if (tutorResponse == null) {
-            startGradingTask();
             return new TutorResponse(null, true);
         }
 
@@ -109,40 +108,21 @@ public class TutorLLMService {
             String function = toolCall.getFunction().getName();
             if (function.equals("startGradingTask")) {
                 startGrading = true;
-                startGradingTask();
             }
         }
 
         return new TutorResponse(tutorResponse, startGrading);
     }
 
-    public void startGradingTask() {
-        this.gradingResults = Mono.fromCallable(() -> {
-            // Add the system message to start the grading process
-            chatMessages.add(new ChatRequestSystemMessage(GRADING_INSTRUCTIONS));
+    public String getGradingResults() {
+        // Add the system message to start the grading process
+        chatMessages.add(new ChatRequestSystemMessage(GRADING_INSTRUCTIONS));
 
-            // Generate the next AI response based on the user input
-            ChatCompletions chatCompletions = openAIClient.getChatCompletions(model, getChatCompletionOptions()
-                    .setResponseFormat(new ChatCompletionsJsonResponseFormat()));
+        // Generate the next AI response based on the user input
+        ChatCompletions chatCompletions = openAIClient.getChatCompletions(model, getChatCompletionOptions()
+                .setResponseFormat(new ChatCompletionsJsonResponseFormat()));
 
-            return chatCompletions.getChoices().get(0).getMessage().getContent();
-        }).subscribeOn(Schedulers.boundedElastic()).cache();
-
-        this.gradingResults.subscribe(
-                result -> {
-                    // Handle the successful result
-                },
-                error -> {
-                    // Handle an error
-                }
-        );
-    }
-
-    public Mono<String> getGradingResults() {
-        if (this.gradingResults == null) {
-            return Mono.error(new IllegalStateException("Grading task has not been started."));
-        }
-        return gradingResults;
+        return chatCompletions.getChoices().get(0).getMessage().getContent();
     }
 
     private static final String PREDIFINED_INSTRUCTIONS =
