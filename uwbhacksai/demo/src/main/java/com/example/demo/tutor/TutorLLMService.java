@@ -166,5 +166,7 @@ public class TutorLLMService {
             - `responseText`
             - `grades` (with all sub-objects: `understandingAndClarity`, `useOfRelevantTerms`, `relevanceOfResponse`, `engagementAndThoughtfulness` - each including `analysis` and `grade`)
             - `feedback`
+            
+            Make sure to provide only one JSON object with one responses array.
             """;
 }
