@@ -63,10 +63,11 @@ public class TutorLLMService {
         // Add the initial system message with predefined instructions
         chatMessages.add(new ChatRequestSystemMessage(content + "\n---\n" + PREDIFINED_INSTRUCTIONS));
 
-        // Generate the first AI response based on the system
+        // Generate the first AI response based on the system instructions
         ChatCompletions chatCompletions = openAIClient.getChatCompletions(model, getChatCompletionOptions());
-
         String tutorResponse = chatCompletions.getChoices().get(0).getMessage().getContent();
+
+        // Add the AI-generated response to the chat history
         chatMessages.add(new ChatRequestAssistantMessage(tutorResponse));
 
         return tutorResponse;
@@ -80,31 +81,42 @@ public class TutorLLMService {
      * @param response the user's response to the AI's previous message.
      * @return the AI-generated follow-up response as a string.
      */
-    public String processResponse(String response) {
+    public TutorResponse processResponse(String response) {
         chatMessages.add(new ChatRequestUserMessage(response));
 
+        // Generate the next AI response based on the user input
         ChatCompletions chatCompletions = openAIClient.getChatCompletions(model, getChatCompletionOptions());
         ChatChoice choice = chatCompletions.getChoices().get(0);
-        if (choice.getFinishReason().equals(CompletionsFinishReason.FUNCTION_CALL)) {
-            // The AI has requested to call a function, handle this case
-            String function = choice.getMessage().getToolCalls().get(0).getId();
-            if (function.equals("startGrading")) {
-                // Perform grading logic here
-                return "Grading completed. Thank you for your responses!";
-            }
-        }
-        String tutorResponse = chatCompletions.getChoices().get(0).getMessage().getContent();
+
+        // Get the AI-generated response and add it to the chat history
+        String tutorResponse = choice.getMessage().getContent();
+        boolean startGrading = false;
         chatMessages.add(new ChatRequestAssistantMessage(tutorResponse));
 
-        return tutorResponse;
+        // Check if the AI has requested to call a tool
+        if (choice.getFinishReason().equals(CompletionsFinishReason.TOOL_CALLS)) {
+            // The AI has requested to call a tool, handle this case
+            ChatCompletionsFunctionToolCall toolCall = (ChatCompletionsFunctionToolCall) choice.getMessage().getToolCalls().get(0);
+            String function = toolCall.getFunction().getName();
+            if (function.equals("startGrading")) {
+                startGrading = true;
+                // TODO: Implement grading logic
+
+            }
+        }
+
+        return new TutorResponse(tutorResponse, startGrading);
     }
+
+    //public String
 
     private static final String PREDIFINED_INSTRUCTIONS =
             """
             You are an expert tutor when it comes to the content provided above. Your task is to test a student's understanding of the content by asking detailed questions that challenge their knowledge. You should be friendly and treat this as a casual conversation between you and your student, while at the same time testing them on ensuring that the interaction remains focused on extracting a clear and thorough understanding of the subject matter. Remember, your goal is to evaluate the student's comprehension and not to instruct or guide them towards the answers. Your questions should be open-ended to allow the student to express their understanding in their own words.
             Begin by greeting the student and explaining what the test is going to be about. Follow this by probing deeper with questions that require the student to apply concepts, analyze information, and express reasoning. Encourage them to elaborate on their responses and to provide examples where applicable.
             Throughout the session, maintain a supportive tone and be receptive to their explanations, using their responses to craft follow-up questions that further challenge their understanding. This process will not only help in assessing their grasp of the material but also in identifying any misconceptions or gaps in knowledge that may need attention in future assessments.
-            After the student responds a question, provide instant feedback on what they did well and areas where they can improve. Then, proceed to the next question to continue the evaluation process.
-            Right now, start with the greeting message and then proceed with the first question. Remember to keep the conversation engaging and focused on the subject matter.
+            Make sure to enumerate the questions.
+            Every time the student responds a question, provide very detailed feedback on what they did well and areas where they can improve. Make sure to be very kind and not give all the answers right away to let the student rationalize. Then, proceed to the next question to continue the evaluation process. After the second question, start the grading process.
+            Right now, start with the greeting message and then proceed with only asking the first question. Remember to keep the conversation engaging and focused on the subject matter.
             """;
 }
