@@ -28,7 +28,10 @@ import java.util.logging.Logger;
 @RequestMapping("/api")
 public class GptAPI {
     private Boolean isGradingTime = false;
-    private String lastTextBuff;
+
+    private String lastTutorTextBuff;
+    private String lastStudentTextBuff;
+
     private final TutorLLMService tutorLLMService;
     private final SpeechToTextService speechToTextService;
     private final TextToSpeechService textToSpeechService;
@@ -63,18 +66,18 @@ public class GptAPI {
 
     @GetMapping("/tutorTranscript")
     public ResponseEntity<String> returnLastTranscript() {
-        return ResponseEntity.ok().contentLength(lastTextBuff.length())
+        return ResponseEntity.ok().contentLength(lastTutorTextBuff.length())
                 .contentType(MediaType.TEXT_PLAIN)
                 .header(HttpHeaders.CONTENT_DISPOSITION)
-                .body(lastTextBuff);
+                .body(lastTutorTextBuff);
     }
 
     @GetMapping("/studentTranscript")
     public ResponseEntity<String> returnLastStudentTranscript() {
-        return ResponseEntity.ok().contentLength(lastTextBuff.length())
+        return ResponseEntity.ok().contentLength(lastStudentTextBuff.length())
                 .contentType(MediaType.TEXT_PLAIN)
                 .header(HttpHeaders.CONTENT_DISPOSITION)
-                .body(lastTextBuff);
+                .body(lastStudentTextBuff);
     }
 
 
@@ -96,7 +99,7 @@ public class GptAPI {
             String tutorResponseText = tutorLLMService.startConversation(content, tutorType);
 
             // Step 2: Convert text response to speech
-            lastTextBuff = tutorResponseText;
+            lastTutorTextBuff = tutorResponseText;
             byte[] tutorResponseAudioData = textToSpeechService.tts(tutorResponseText);
 
             // Step 4: Create a resource from the tutor response audio data
@@ -129,7 +132,7 @@ public class GptAPI {
             String transcribedStudentResponse = speechToTextService.getTranscription(
                     file.getBytes(), file.getOriginalFilename()
             );
-            lastTextBuff = transcribedStudentResponse;
+            lastStudentTextBuff = transcribedStudentResponse;
 
             // Step 2: Process the student's response and generate a tutor response
             TutorResponse tutorResponse = tutorLLMService.processResponse(transcribedStudentResponse);
