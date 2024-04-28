@@ -29,7 +29,7 @@ import java.util.logging.Logger;
 @RestController
 @RequestMapping("/api")
 public class GptAPI {
-
+    private Boolean grading;
     private String lastTextBuff;
     private final TutorLLMService tutorLLMService;
     private final SpeechToTextService speechToTextService;
@@ -82,6 +82,18 @@ public class GptAPI {
                 .body(lastTextBuff);
 
     }
+
+
+    @GetMapping("/isGradingTime")
+    public ResponseEntity<Boolean> shouldGrade() {
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION)
+                .body(grading);
+
+    }
+
+
+
 
     @PostMapping("/startTest")
     public ResponseEntity<Resource> processRequest(@RequestBody StartTestRequest startTestRequest) {
