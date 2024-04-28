@@ -19,9 +19,12 @@ import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.logging.Logger;
 
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api")
 public class GptAPI {
@@ -102,18 +105,18 @@ public class GptAPI {
 
     }
 
-    @PostMapping(value = "/sendStudentResponse", consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-            produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<Resource> processStudentResponse(@RequestParam("file") MultipartFile file) {
+    @PostMapping(value = "/sendStudentResponse")
+    public ResponseEntity<Resource> processStudentResponse(MultipartFile file) {
         try {
+            // Add logging to inspect received file
+            System.out.println("Received file: " + file.getOriginalFilename());
+
             // Step 1: Queue up behavioral analysis and convert student's audio response to text
             voiceAnalysisService.asyncQueueAnalysis(file);
 
-            // Convert the audio file to a byte array
-            byte[] audioData = file.getBytes();
             // Get the transcription of the student's response
             String transcribedStudentResponse = speechToTextService.getTranscription(
-                    audioData, file.getOriginalFilename()
+                    file.getBytes(), file.getOriginalFilename()
             );
 
             // Step 2: Process the student's response and generate a tutor response
