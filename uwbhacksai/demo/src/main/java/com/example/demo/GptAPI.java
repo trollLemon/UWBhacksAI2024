@@ -3,6 +3,7 @@ package com.example.demo;
 import com.example.demo.tutor.SpeechToTextService;
 import com.example.demo.tutor.TextToSpeechService;
 import com.example.demo.tutor.TutorLLMService;
+import com.example.demo.tutor.TutorResponse;
 import com.example.demo.voiceAnalysis.VoiceAnalysisService;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
@@ -82,8 +83,6 @@ public class GptAPI {
 
     }
 
-
-
     @PostMapping("/startTest")
     public ResponseEntity<Resource> processRequest(@RequestBody StartTestRequest startTestRequest) {
 
@@ -130,12 +129,15 @@ public class GptAPI {
             );
 
             // Step 2: Process the student's response and generate a tutor response
-            String tutorResponse = tutorLLMService.processResponse(transcribedStudentResponse);
-	    
-	    lastTextBuff = tutorResponse;
+            TutorResponse tutorResponse = tutorLLMService.processResponse(transcribedStudentResponse);
+            String tutorTextResponse = tutorLLMService.processResponse(transcribedStudentResponse).getTextResponse();
+            lastTextBuff = tutorTextResponse;
+
+            // Check if the tutor is done grading
+            boolean startGrading = tutorResponse.isDone();
 
             // Step 3: Convert the tutor response to speech and get the audio data
-            byte[] tutorResponseAudioData = textToSpeechService.tts(tutorResponse);
+            byte[] tutorResponseAudioData = textToSpeechService.tts(tutorTextResponse);
 
             // Step 4: Create a resource from the tutor response audio data
             return _sendAudio(tutorResponseAudioData);
