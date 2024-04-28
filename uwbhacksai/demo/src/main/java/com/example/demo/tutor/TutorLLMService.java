@@ -167,6 +167,38 @@ public class TutorLLMService {
             - `grades` (with all sub-objects: `understandingAndClarity`, `useOfRelevantTerms`, `relevanceOfResponse`, `engagementAndThoughtfulness` - each including `analysis` and `grade`)
             - `feedback`
             
-            Make sure to provide only one JSON object with one responses array.
+            ### Example JSON for a single response
+            ```json
+            {
+              "responses": [
+                {
+                  "questionId": 1,
+                  "questionText": "Describe the process of cellular respiration.",
+                  "responseText": "Cellular respiration is the process by which cells extract energy from glucose.",
+                  "grades": {
+                    "understandingAndClarity": {
+                      "analysis": "The student provides a correct but basic explanation of cellular respiration.",
+                      "grade": 2
+                    },
+                    "useOfRelevantTerms": {
+                      "analysis": "The student uses the correct term 'cellular respiration' but fails to mention key terms like 'ATP' or 'mitochondria'.",
+                      "grade": 2
+                    },
+                    "relevanceOfResponse": {
+                      "analysis": "The response directly addresses the question but lacks depth.",
+                      "grade": 2
+                    },
+                    "engagementAndThoughtfulness": {
+                      "analysis": "The response is straightforward with minimal personal insight or engagement.",
+                      "grade": 1
+                    }
+                  },
+                  "feedback": "Try to expand on how ATP is generated and the role of mitochondria in cellular respiration."
+                }
+              ]
+            }
+            ```
+            
+            Make sure to provide only one JSON object with one responses array. The responses array must have all the responses to the questions asked to the student.
             """;
 }
