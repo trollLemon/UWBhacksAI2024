@@ -26,5 +26,4 @@ class TutorLLMServiceTests {
         assertTrue(aiResponse.contains(topic), "Model should return a response on the topic. If the topic string isnt in the starting response, then this should fail");
 
     }
-
 }

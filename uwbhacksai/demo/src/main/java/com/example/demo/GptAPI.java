@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.HttpHeaders;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
+import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -153,6 +154,11 @@ public class GptAPI {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ByteArrayResource("Error during processing".getBytes(StandardCharsets.UTF_8)));
         }
+    }
+
+    @PostMapping(value = "/gradingReport")
+    public Mono<String> gradingReport() {
+        return tutorLLMService.getGradingResults();
     }
 
 }
