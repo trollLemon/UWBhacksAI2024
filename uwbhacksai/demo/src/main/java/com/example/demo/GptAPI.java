@@ -156,7 +156,7 @@ public class GptAPI {
         }
     }
 
-    @PostMapping(value = "/gradingReport")
+    @GetMapping(value = "/gradingReport")
     public Mono<String> gradingReport() {
         return tutorLLMService.getGradingResults();
     }
